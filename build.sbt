@@ -12,7 +12,5 @@ libraryDependencies ++= Seq(
   // Akka
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
   "com.typesafe.akka" %% "akka-remote" % akkaVersion,
-  "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
-  "jline" % "jline" % "2.13",
-  "joda-time" % "joda-time" % "2.9.2"
+  "com.typesafe.akka" %% "akka-testkit" % akkaVersion
 )
