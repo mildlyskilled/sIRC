@@ -1,3 +1,5 @@
+package com.mildlyskilled.actors
+
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit}
 import org.scalatest.{BeforeAndAfterAll, MustMatchers, Suite, WordSpecLike}

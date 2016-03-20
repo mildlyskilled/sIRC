@@ -2,7 +2,7 @@ package com.mildlyskilled.protocol
 
 import akka.actor.ActorRef
 
-object Server {
+object Server extends Global {
 
   sealed trait State
 
@@ -14,11 +14,5 @@ object Server {
 
   case class Channels(channels: List[ActorRef]) extends Data
 
-
-  sealed trait Message
-
-  case object Start extends Message
-
-  final case class Register(room: ActorRef) extends Message
 
 }
