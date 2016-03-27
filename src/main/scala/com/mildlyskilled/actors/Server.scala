@@ -9,6 +9,9 @@ class Server extends FSM[State, Data] {
   val globalChannel = context.actorOf(Props[Channel], "global")
   startWith(Idle, Channels(globalChannel::Nil))
 
+  /**
+    * @todo there should be an auth actor?
+    */
   val auth = new Auth
 
   when(Idle) {
@@ -54,6 +57,19 @@ class Server extends FSM[State, Data] {
       }
       stay
 
+  }
+
+
+  onTransition {
+    case _ -> Active =>
+      log.info(Console.BLUE + "Server going ACTIVE" + Console.RESET)
+    case _ -> Idle =>
+      log.info(Console.BLUE + "Server going IDLE" + Console.RESET)
+  }
+
+  whenUnhandled {
+    case Event(Start, _) =>
+      goto(Active)
   }
 
   initialize()

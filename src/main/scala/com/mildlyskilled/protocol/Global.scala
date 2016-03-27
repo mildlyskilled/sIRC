@@ -28,4 +28,6 @@ trait Global {
   final case class AuthenticationStatus(status: String) extends Message
 
   final case class JoinChannel(channel: String) extends Message
+
+  final case class Connect(server: ActorRef) extends Message
 }
