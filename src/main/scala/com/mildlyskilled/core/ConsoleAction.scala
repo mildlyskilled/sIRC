@@ -2,11 +2,13 @@ package com.mildlyskilled.core
 
 import scala.tools.jline.console.ConsoleReader
 
-object Output {
+object ConsoleAction {
 
-  def displayOptions(optionsMap: Map[String, Any], message: String = "Select an option"): Any = {
+  private val consoleReader = new ConsoleReader()
 
+  def getConsoleReader: ConsoleReader = consoleReader
 
+  def promptSelection(optionsMap: Map[String, Any], message: String = "Select an option"): Any = {
     println(Console.GREEN)
     println(message)
     println("-" * message.length)
@@ -15,7 +17,6 @@ object Output {
       case (selector, option) => println(s"[${selector.toString}] $option")
     }
 
-    val consoleReader = new ConsoleReader()
 
     val selection = for (
       ln <- Iterator.continually {
@@ -25,4 +26,10 @@ object Output {
 
     selection.next()
   }
+
+  def promptInput(msg:String = "Type in some input"): String = {
+    val input = for(in <- Iterator.continually(getConsoleReader.readLine(s"$msg > ")).takeWhile(_ != "quit")) yield in
+    input.next()
+  }
+
 }
