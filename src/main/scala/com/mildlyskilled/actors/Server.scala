@@ -10,7 +10,7 @@ class Server extends FSM[State, Data] {
   startWith(Idle, Channels(globalChannel::Nil))
 
   /**
-    * @todo there should be an auth actor?
+    * @todo there should be an auth actor/service?
     */
   val auth = new Auth
 
@@ -20,16 +20,16 @@ class Server extends FSM[State, Data] {
 
     case Event(Info(msg), _) =>
       log.info(Console.GREEN + msg + Console.RESET)
-      stay
+      stay()
   }
 
   when(Active) {
     case Event(Start, _) =>
-      stay
+      stay()
 
     case Event(Info(msg), _) =>
       log.info(Console.GREEN + msg + Console.RESET)
-      stay
+      stay()
 
     case Event(RegisterChannel(r), serverChannels@Channels(c)) =>
       stay using serverChannels.copy(channels = createChannel(r) :: c)
@@ -39,7 +39,7 @@ class Server extends FSM[State, Data] {
         globalChannel ! RegisterUser(sender)
         sender ! AuthenticationStatus("successful")
       }
-      stay
+      stay()
 
     case Event(JoinChannel(c), s@Channels(ch)) =>
       s.channels.find(ch => ch.path.name == c) match {
@@ -48,15 +48,18 @@ class Server extends FSM[State, Data] {
         case None => sender ! Warn(s"$c is not a valid channel")
       }
 
-      stay
+      stay()
 
     case Event(RegisteredUsers, s@Channels(ch)) =>
       ch.find(c => c == globalChannel) match {
         case Some(c) => c.tell(RegisteredUsers, sender)
         case None => sender ! Warn("We do not have a global channel")
       }
-      stay
+      stay()
 
+    case Event(Leave, s@Channels(ch)) =>
+      ch.foreach( _ ! RemoveUser(sender))
+      stay()
   }
 
 

@@ -5,7 +5,7 @@ import akka.actor.ActorRef
 /**
   * Created by kwabena on 19/03/2016.
   */
-trait Global {
+trait Common {
 
   sealed trait Message
 
@@ -13,11 +13,15 @@ trait Global {
 
   case object RegisteredUsers extends Message
 
+  case object Leave extends Message
+
   final case class Info(msg: String) extends Message
 
   final case class Warn(msg: String) extends Message
 
   final case class RegisterUser(user: ActorRef) extends Message
+
+  final case class RemoveUser(user: ActorRef) extends Message
 
   final case class RegisteredUsers(users: List[String]) extends Message
 

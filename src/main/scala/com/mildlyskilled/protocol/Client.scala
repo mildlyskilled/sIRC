@@ -2,7 +2,7 @@ package com.mildlyskilled.protocol
 
 import akka.actor.ActorRef
 
-object Client extends Global{
+object Client extends Common {
 
   sealed trait State
 

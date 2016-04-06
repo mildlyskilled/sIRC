@@ -56,5 +56,12 @@ class ServerSpec extends ActorHarness {
       server.tell(JoinChannel("channel1"), testActor)
       expectMsg(Info(s"${testActor.path.name} registered with channel1"))
     }
+
+    "remove users from it's channels when it receives a Leave message" in {
+      server.tell(Leave, testActor)
+      expectMsg(Info(s"${testActor.path.name} registered with channel1"))
+      expectMsg(Info(s"Removing ${testActor.path.name} from channel1"))
+      expectMsg(Info(s"Removing ${testActor.path.name} from global"))
+    }
   }
 }

@@ -9,22 +9,30 @@ object ConsoleAction {
   def getConsoleReader: ConsoleReader = consoleReader
 
   def promptSelection(optionsMap: Map[String, Any], message: String = "Select an option"): Any = {
+
     println(Console.GREEN)
     println(message)
     println("-" * message.length)
-    println(Console.RESET)
-    optionsMap.foreach {
-      case (selector, option) => println(s"[${selector.toString}] $option")
+
+    if (optionsMap.isEmpty) {
+      println("No options available at the moment")
+    } else{
+      optionsMap.foreach {
+        case (selector, option) => println(s"[${selector.toString}] $option")
+      }
+
+      println(Console.RESET)
+
+      val selection = for (
+        ln <- Iterator.continually {
+          consoleReader.readLine("> ")
+        } if optionsMap.contains(ln)
+      ) yield optionsMap(ln)
+
+      selection.next()
     }
 
 
-    val selection = for (
-      ln <- Iterator.continually {
-        consoleReader.readLine("> ")
-      } if optionsMap.contains(ln)
-    ) yield optionsMap(ln)
-
-    selection.next()
   }
 
   def promptInput(msg:String = "Type in some input"): String = {

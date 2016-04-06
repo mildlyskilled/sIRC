@@ -27,5 +27,13 @@ class ChannelSpec extends ActorHarness{
       expectMsg(Info(s"${testActor.path.name} registered with ${channelActor.path.name}"))
       expectMsg(RegisteredUsers(List(testActor.path.name)))
     }
+
+    "remove a user when it receives RemoveUser message" in {
+      channelActor ! RemoveUser(testActor)
+      channelActor.underlyingActor.stateData match {
+        case ChannelState(participants) => assert(!participants.contains(testActor))
+        case _ => fail("There needs to be a channel state")
+      }
+    }
   }
 }
