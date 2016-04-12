@@ -2,7 +2,7 @@ package com.mildlyskilled.protocol
 
 import akka.actor.ActorRef
 
-object Server extends Common {
+object Server {
 
   sealed trait State
 

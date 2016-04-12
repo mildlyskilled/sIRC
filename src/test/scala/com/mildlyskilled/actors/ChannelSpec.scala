@@ -2,6 +2,7 @@ package com.mildlyskilled.actors
 
 import akka.testkit.TestFSMRef
 import com.mildlyskilled.protocol.Channel._
+import com.mildlyskilled.protocol.Message._
 
 
 class ChannelSpec extends ActorHarness{
@@ -11,6 +12,11 @@ class ChannelSpec extends ActorHarness{
 
     "be Idle when initialised" in {
       channelActor.underlyingActor.stateName must be(Idle)
+    }
+
+    "transition to active when sent a Start message" in {
+      channelActor ! Start
+      channelActor.underlyingActor.stateName must be(Active)
     }
 
     "allow users to register" in {

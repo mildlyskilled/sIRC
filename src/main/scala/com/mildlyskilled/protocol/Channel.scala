@@ -2,7 +2,7 @@ package com.mildlyskilled.protocol
 
 import akka.actor.ActorRef
 
-object Channel extends Common {
+object Channel {
 
   sealed trait State
 

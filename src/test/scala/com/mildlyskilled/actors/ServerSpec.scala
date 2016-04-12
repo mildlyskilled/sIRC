@@ -2,6 +2,7 @@ package com.mildlyskilled.actors
 
 import akka.testkit.TestFSMRef
 import com.mildlyskilled.protocol.Server._
+import com.mildlyskilled.protocol.Message._
 
 class ServerSpec extends ActorHarness {
 

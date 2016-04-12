@@ -16,7 +16,7 @@ object ConsoleAction {
 
     if (optionsMap.isEmpty) {
       println("No options available at the moment")
-    } else{
+    } else {
       optionsMap.foreach {
         case (selector, option) => println(s"[${selector.toString}] $option")
       }
@@ -35,9 +35,15 @@ object ConsoleAction {
 
   }
 
-  def promptInput(msg:String = "Type in some input"): String = {
-    val input = for(in <- Iterator.continually(getConsoleReader.readLine(s"$msg > ")).takeWhile(_ != "quit")) yield in
-    input.next()
+  def promptInput(msg: String = "Type in some input", default: String = "input", exitString: String = "quit"): String = {
+    val input = for (in <- Iterator.continually(getConsoleReader.readLine(s"$msg > "))
+      .takeWhile(_ != exitString)) yield in
+    input.next.trim match {
+      case "" => default
+      case x => x
+    }
   }
+
+  def clean(s: String): String = s.replaceAll("""[\W_]+""", "")
 
 }

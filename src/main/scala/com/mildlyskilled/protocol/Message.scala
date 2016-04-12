@@ -5,7 +5,7 @@ import akka.actor.ActorRef
 /**
   * Created by kwabena on 19/03/2016.
   */
-trait Common {
+object Message {
 
   sealed trait Message
 
@@ -13,7 +13,11 @@ trait Common {
 
   case object RegisteredUsers extends Message
 
+  case object ListChannels extends Message
+
   case object Leave extends Message
+
+  case object Stop extends Message
 
   final case class Info(msg: String) extends Message
 
@@ -34,4 +38,11 @@ trait Common {
   final case class JoinChannel(channel: String) extends Message
 
   final case class Connect(server: ActorRef) extends Message
+
+  final case class ChannelList(channels: List[ActorRef]) extends Message
+
+  val privateMessageRegex = """^@([^\s]+) (.*)$""".r
+
+  val userCommandMessageRegex = """^:([^\s]+) (.*)$""".r
+
 }

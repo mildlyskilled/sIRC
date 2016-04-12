@@ -2,6 +2,7 @@ package com.mildlyskilled.actors
 
 import akka.actor.FSM
 import com.mildlyskilled.protocol.Client._
+import com.mildlyskilled.protocol.Message._
 
 
 class Client extends FSM[State, Data] {
