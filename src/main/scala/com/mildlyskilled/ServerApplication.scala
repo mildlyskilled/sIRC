@@ -6,6 +6,7 @@ import java.util.logging.Logger
 import akka.actor.{ActorSystem, Props}
 import com.mildlyskilled.actors.Server
 import com.mildlyskilled.protocol.Message._
+import com.typesafe.config.ConfigFactory
 
 import scala.tools.jline.console.ConsoleReader
 
@@ -14,9 +15,14 @@ object ServerApplication extends App {
   logger.info(Console.GREEN_B + "Starting server" + Console.RESET)
 
   val ipSelection = ConsoleAction.promptSelection(Network.addressMap, "Select an IP address")
-  val systemName = ConsoleAction.clean(ConsoleAction.promptInput("Name this server"))
-  val system = ActorSystem("sIRC")
-  val server = system.actorOf(Props[Server],systemName)
+  val serverName = ConsoleAction.clean(ConsoleAction.promptInput("Name this server"))
+
+  val serverConfiguration = ConfigFactory.parseString(s"""akka.remote.netty.tcp.hostname="$ipSelection" """)
+  val defaultConfig = ConfigFactory.load.getConfig("server")
+  val completeConfig = serverConfiguration.withFallback(defaultConfig)
+
+  val system = ActorSystem("sIRC", completeConfig)
+  val server = system.actorOf(Props[Server], serverName)
   val cReader = new ConsoleReader()
 
   Iterator.continually(cReader.readLine("> ")).takeWhile(_ != "/exit").foreach {

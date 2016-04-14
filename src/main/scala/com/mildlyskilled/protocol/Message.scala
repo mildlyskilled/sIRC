@@ -43,6 +43,6 @@ object Message {
 
   val privateMessageRegex = """^@([^\s]+) (.*)$""".r
 
-  val userCommandMessageRegex = """^:([^\s]+) (.*)$""".r
+  val userCommandMessageRegex = """^:([^\s]+) ([^\s]+)$""".r
 
 }
