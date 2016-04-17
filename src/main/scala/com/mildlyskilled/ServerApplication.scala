@@ -14,7 +14,7 @@ object ServerApplication extends App {
   implicit val logger = Logger.getLogger("Server Logger")
   logger.info(Console.GREEN_B + "Starting server" + Console.RESET)
 
-  val ipSelection = ConsoleAction.promptSelection(Network.addressMap, "Select an IP address")
+  val ipSelection = ConsoleAction.promptSelection(Network.addressMap, "Select an IP address", Some("127.0.0.1"))
   val serverName = ConsoleAction.clean(ConsoleAction.promptInput("Name this server"))
 
   val serverConfiguration = ConfigFactory.parseString(s"""akka.remote.netty.tcp.hostname="$ipSelection" """)

@@ -1,20 +1,22 @@
 package com.mildlyskilled
 
-import java.util.logging.Logger
 
 import akka.actor.{ActorSystem, Props}
 import com.mildlyskilled.actors.Client
 import com.mildlyskilled.core.{ConsoleAction, Network}
-import com.mildlyskilled.protocol.Message.Login
+import com.mildlyskilled.protocol.Message._
 import com.typesafe.config.ConfigFactory
 
-object ClientApplication extends  App {
+import java.util.logging.Logger
+import scala.tools.jline.console.ConsoleReader
+
+object ClientApplication extends App {
 
   implicit val logger = Logger.getLogger("Client Logger")
   logger.info(Console.GREEN_B + "Starting client" + Console.RESET)
   val username = ConsoleAction.promptInput("Username")
-  val serverName= ConsoleAction.promptInput("Server Name")
-  val ipSelection = ConsoleAction.promptSelection(Network.addressMap, "Select an IP address")
+  val serverName = ConsoleAction.promptInput("Server Name")
+  val ipSelection = ConsoleAction.promptSelection(Network.addressMap, "Select an IP address", Some("127.0.0.1"))
 
   val clientConfig = ConfigFactory.parseString(s"""akka.remote.netty.tcp.hostname="$ipSelection" """)
   val defaultConfig = ConfigFactory.load.getConfig("client")
@@ -31,4 +33,22 @@ object ClientApplication extends  App {
 
   server.tell(Login("username", "password"), client)
 
+  val cReader = new ConsoleReader
+
+  Iterator.continually(cReader.readLine("> ")).takeWhile(_ != "/exit").foreach {
+    case "/start" =>
+      server ! Start
+    case "/users" =>
+      server.tell(RegisteredUsers, client)
+    case "/channels" =>
+      server.tell(ListChannels, client)
+    case "/leave" =>
+      server.tell(Leave, client)
+    case msg =>
+      server ! Info(msg)
+    case userCommandMessageRegex("join", c) =>
+      server.tell(JoinChannel(ConsoleAction.clean(c)), client)
+  }
+
+  system.terminate()
 }

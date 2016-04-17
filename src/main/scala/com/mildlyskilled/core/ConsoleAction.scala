@@ -8,14 +8,20 @@ object ConsoleAction {
 
   def getConsoleReader: ConsoleReader = consoleReader
 
-  def promptSelection(optionsMap: Map[String, Any], message: String = "Select an option"): Any = {
+  def promptSelection(optionsMap: Map[String, Any], message: String = "Select an option", default: Option[String] = None): Any = {
 
     println(Console.GREEN)
     println(message)
     println("-" * message.length)
 
     if (optionsMap.isEmpty) {
-      println("No options available at the moment")
+      default match {
+        case Some(defaultValue) =>
+          defaultValue
+        case None =>
+          println(Console.RED + "No options available at the moment" + Console.RESET)
+      }
+
     } else {
       optionsMap.foreach {
         case (selector, option) => println(s"[${selector.toString}] $option")
@@ -42,6 +48,13 @@ object ConsoleAction {
       case "" => default
       case x => x
     }
+  }
+
+  def outputList(list: List[AnyRef], name: String): Unit = {
+    println(Console.YELLOW)
+    println(s"list of $name")
+    list foreach println
+    println(Console.RESET)
   }
 
   def clean(s: String): String = s.replaceAll("""[\W_]+""", "")

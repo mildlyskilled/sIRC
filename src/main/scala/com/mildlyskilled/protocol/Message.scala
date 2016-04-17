@@ -39,7 +39,7 @@ object Message {
 
   final case class Connect(server: ActorRef) extends Message
 
-  final case class ChannelList(channels: List[ActorRef]) extends Message
+  final case class ChannelList(channels: List[String]) extends Message
 
   val privateMessageRegex = """^@([^\s]+) (.*)$""".r
 

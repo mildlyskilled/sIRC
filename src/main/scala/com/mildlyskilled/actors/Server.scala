@@ -1,7 +1,7 @@
 package com.mildlyskilled.actors
 
-import akka.actor.{ActorRef, FSM, InvalidActorNameException, Props}
-import com.mildlyskilled.core.Auth
+import akka.actor.{ActorRef, FSM, InvalidActorNameException, Props, Terminated}
+import com.mildlyskilled.core.{Auth, ConsoleAction}
 import com.mildlyskilled.protocol.Server._
 import com.mildlyskilled.protocol.Message._
 
@@ -48,6 +48,7 @@ class Server extends FSM[State, Data] {
     case Event(Login(username, password), _) =>
       if (auth.login(username, password)) {
         globalChannel ! RegisterUser(sender)
+        context.watch(sender())
         sender ! AuthenticationStatus("successful")
       }
       stay()
@@ -68,17 +69,15 @@ class Server extends FSM[State, Data] {
       stay()
 
     case Event(RegisteredUsers(users), _) =>
-      println("Registered Users")
-      users foreach println
+      ConsoleAction.outputList(users, "Users")
       stay()
 
     case Event(ListChannels, Channels(ch)) =>
-      sender ! ChannelList(ch)
+      sender ! ChannelList(ch.map(c => c.path.name))
       stay()
 
     case Event(ChannelList(c), _) =>
-      println("Registered Channels")
-      c foreach (ch => println(ch.path.name))
+      ConsoleAction.outputList(c, "Channels")
       stay()
     case Event(Leave, s@Channels(ch)) =>
       ch.foreach(_ ! RemoveUser(sender))
@@ -86,7 +85,11 @@ class Server extends FSM[State, Data] {
 
     case Event(Stop, _) =>
       context.stop(self)
-      stay
+      stay // um OK
+
+    case Event(Terminated(client), s@Channels(ch)) =>
+      ch.foreach(_ ! RemoveUser(client))
+      stay()
   }
 
 
